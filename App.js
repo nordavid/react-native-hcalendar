@@ -9,11 +9,8 @@
 import React from 'react';
 import {
   SafeAreaView,
-  View,
   StyleSheet,
-  Text,
   StatusBar,
-  TouchableOpacity,
   Image,
   Dimensions,
 } from 'react-native';
@@ -37,7 +34,7 @@ const App = () => {
           resizeMode={'contain'}
           source={require('./src/assets/maptwo.png')}
         />
-        <HCalendar borderRadius={150} />
+        <HCalendar borderRadius={150} daysBeforeToday={5} daysAfterToday={30} />
       </SafeAreaView>
     </>
   );

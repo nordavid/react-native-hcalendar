@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   Animated,
   StyleSheet,
@@ -10,6 +10,7 @@ import {
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import {DAYS} from '../constants/data';
 import HCalendarItem from './hcalendarItem';
+import {createCalendarElements} from './hcalendar.utils';
 
 const options = {
   enableVibrateFallback: true,
@@ -19,13 +20,15 @@ const options = {
 const ITEM_WIDTH = 60;
 const ITEM_HEIGHT = 60;
 
-const HCalendar = ({borderRadius}) => {
-  const [selectedIndex, setSelectedIndex] = useState(3);
-  const [selectedId, setSelectedId] = useState(null);
+const HCalendar = ({borderRadius, daysBeforeToday, daysAfterToday}) => {
+  // useStates
+  const [selectedIndex, setSelectedIndex] = useState(daysBeforeToday);
+  const [dateList, setDateList] = useState([]);
   const [isHCalendarOpen, setIsHCalendarOpen] = useState(false);
   const flatListRef = useRef(null);
   const widthAnim = useRef(new Animated.Value(ITEM_WIDTH)).current;
 
+  // useRefs
   const onViewRef = React.useRef((viewableItems) => {
     //console.log(viewableItems);
     //console.log('viewableTrigger');
@@ -35,6 +38,18 @@ const HCalendar = ({borderRadius}) => {
     viewAreaCoveragePercentThreshold: 0,
     waitForInteraction: true,
   });
+
+  useEffect(() => {
+    initDateList();
+  }, []);
+
+  const initDateList = () => {
+    const calendarElements = createCalendarElements(
+      daysBeforeToday,
+      daysAfterToday + 4, // add 4 elemtens because the last 4 items are disabled due to the fact that it cant be scrolled to them
+    );
+    setDateList(calendarElements);
+  };
 
   // calendaritem tapped
   const calItemTapped = (id, tappedIndex) => {
@@ -88,11 +103,11 @@ const HCalendar = ({borderRadius}) => {
   };
 
   const todayBtnTapped = () => {
-    setSelectedIndex(3);
+    setSelectedIndex(daysBeforeToday);
     if (flatListRef.current) {
       flatListRef.current.scrollToIndex({
         animated: true,
-        index: 3,
+        index: daysBeforeToday,
       });
     }
   };
@@ -105,14 +120,14 @@ const HCalendar = ({borderRadius}) => {
         onPress={() => calItemTapped(item.id, index)}
         isActiveItem={index === selectedIndex}
         borderRadius={borderRadius}
-        isDeactivated={index > DAYS.length - 5}
+        isDeactivated={index > dateList.length - 5}
       />
     );
   };
 
   return (
     <View style={styles.container}>
-      {selectedIndex != 3 && (
+      {selectedIndex != daysBeforeToday && (
         <TouchableOpacity style={styles.todayButton} onPress={todayBtnTapped}>
           <Text style={styles.todayButtonTxt}>HEUTE</Text>
         </TouchableOpacity>
@@ -140,11 +155,14 @@ const HCalendar = ({borderRadius}) => {
         })}
         initialScrollIndex={selectedIndex}
         showsHorizontalScrollIndicator={false}
-        data={DAYS}
+        data={dateList}
         keyExtractor={(calendarItem) => calendarItem.id}
         renderItem={renderItem}
       />
-      {/* <View style={styles.activeCalItemBorder} pointerEvents={'none'} /> */}
+      {/* <View
+        style={[styles.activeCalItemBorder, {borderRadius: borderRadius}]}
+        pointerEvents={'none'}
+      /> */}
     </View>
   );
 };
