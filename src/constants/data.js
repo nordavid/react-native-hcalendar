@@ -137,4 +137,54 @@ export const DAYS = [
     dayAcronym: 'So',
     dayNumber: '21',
   },
+  {
+    id: '15',
+    dayAcronym: 'Mo',
+    dayNumber: '22',
+  },
+  {
+    id: '16',
+    dayAcronym: 'Di',
+    dayNumber: '23',
+  },
+  {
+    id: '17',
+    dayAcronym: 'Mi',
+    dayNumber: '24',
+  },
+  {
+    id: '18',
+    dayAcronym: 'Do',
+    dayNumber: '25',
+  },
+  {
+    id: '19',
+    dayAcronym: 'Fr',
+    dayNumber: '26',
+  },
+  {
+    id: '20',
+    dayAcronym: 'Sa',
+    dayNumber: '27',
+  },
+  {
+    id: '21',
+    dayAcronym: 'So',
+    dayNumber: '28',
+  },
+  {
+    id: '22',
+    dayAcronym: 'Mo',
+    dayNumber: '29',
+  },
+  {
+    id: '23',
+    dayAcronym: 'Di',
+    dayNumber: '30',
+  },
+  {
+    id: '24',
+    dayAcronym: 'Mi',
+    dayNumber: '31',
+  },
 ];

@@ -29,17 +29,16 @@ const HCalendar = ({borderRadius, daysBeforeToday, daysAfterToday}) => {
   const widthAnim = useRef(new Animated.Value(ITEM_WIDTH)).current;
 
   // useRefs
-  const onViewRef = React.useRef((viewableItems) => {
-    //console.log(viewableItems);
-    //console.log('viewableTrigger');
-    //ReactNativeHapticFeedback.trigger('impactMedium', options);
-  });
-  const viewConfigRef = React.useRef({
-    viewAreaCoveragePercentThreshold: 0,
-    waitForInteraction: true,
-  });
+  // const onViewRef = React.useRef((viewableItems) => {
+  //   //ReactNativeHapticFeedback.trigger('impactMedium', options);
+  // });
+  // const viewConfigRef = React.useRef({
+  //   viewAreaCoveragePercentThreshold: 0,
+  //   waitForInteraction: true,
+  // });
 
   useEffect(() => {
+    console.log('init datelist');
     initDateList();
   }, []);
 
@@ -78,7 +77,7 @@ const HCalendar = ({borderRadius, daysBeforeToday, daysAfterToday}) => {
   const openCalendar = (index) => {
     Animated.timing(widthAnim, {
       toValue: 5 * ITEM_WIDTH,
-      duration: 300,
+      duration: 220,
       easing: Easing.out(Easing.bezier(0.28, 0.1, 0.28, 0.99)),
       useNativeDriver: false,
     }).start();
@@ -87,7 +86,7 @@ const HCalendar = ({borderRadius, daysBeforeToday, daysAfterToday}) => {
   const closeCalendar = (index) => {
     Animated.timing(widthAnim, {
       toValue: ITEM_WIDTH,
-      duration: 300,
+      duration: 240,
       easing: Easing.out(Easing.bezier(0.28, 0.1, 0.28, 0.99)),
       useNativeDriver: false,
     }).start(() => scrollToIndex(index));
@@ -103,6 +102,7 @@ const HCalendar = ({borderRadius, daysBeforeToday, daysAfterToday}) => {
   };
 
   const todayBtnTapped = () => {
+    ReactNativeHapticFeedback.trigger('impactHeavy', options);
     setSelectedIndex(daysBeforeToday);
     if (flatListRef.current) {
       flatListRef.current.scrollToIndex({
@@ -143,11 +143,11 @@ const HCalendar = ({borderRadius, daysBeforeToday, daysAfterToday}) => {
           {borderRadius: borderRadius},
           {width: widthAnim},
         ]}
-        scrollEnabled={true}
+        scrollEnabled={isHCalendarOpen}
         horizontal={true}
         snapToAlignment={'center'}
-        onViewableItemsChanged={onViewRef.current}
-        viewabilityConfig={viewConfigRef.current}
+        // onViewableItemsChanged={onViewRef.current}
+        // viewabilityConfig={viewConfigRef.current}
         getItemLayout={(data, index) => ({
           length: ITEM_WIDTH,
           offset: ITEM_WIDTH * index,
