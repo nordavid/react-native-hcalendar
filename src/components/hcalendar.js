@@ -27,7 +27,7 @@ const HCalendar = ({borderRadius, daysBeforeToday, daysAfterToday}) => {
   const [isHCalendarOpen, setIsHCalendarOpen] = useState(false);
   const isCalendarOpened = useRef(false);
   const flatListRef = useRef(null);
-  const widthAnim = useRef(new Animated.Value(ITEM_WIDTH)).current;
+  const widthAnim = useRef(new Animated.Value(1)).current;
 
   // useRefs
   const onViewRef = React.useRef((viewableItems) => {
@@ -83,19 +83,19 @@ const HCalendar = ({borderRadius, daysBeforeToday, daysAfterToday}) => {
 
   const openCalendar = (index) => {
     Animated.timing(widthAnim, {
-      toValue: 5 * ITEM_WIDTH,
+      toValue: 200,
       duration: 240,
       easing: Easing.out(Easing.bezier(0.28, 0.1, 0.28, 0.99)),
-      useNativeDriver: false,
+      useNativeDriver: true,
     }).start();
   };
 
   const closeCalendar = (index) => {
     Animated.timing(widthAnim, {
-      toValue: ITEM_WIDTH,
+      toValue: 0,
       duration: 240,
       easing: Easing.out(Easing.bezier(0.28, 0.1, 0.28, 0.99)),
-      useNativeDriver: false,
+      useNativeDriver: true,
     }).start(() => scrollToIndex(index));
   };
 
@@ -149,7 +149,7 @@ const HCalendar = ({borderRadius, daysBeforeToday, daysAfterToday}) => {
         style={[
           styles.flatList,
           {borderRadius: borderRadius},
-          {width: widthAnim},
+          {transform: [{translateX: widthAnim}]},
         ]}
         //scrollEnabled={isCalendarOpened.current}
         scrollEnabled={true}
