@@ -50,6 +50,24 @@ const App = () => {
             />
           </TouchableOpacity>
         </View>
+        <Image
+          style={{
+            position: 'absolute',
+            bottom: -60,
+            width: SCREEN_WIDTH,
+          }}
+          resizeMode={'contain'}
+          source={require('./src/assets/tabbar.png')}
+        />
+        <View
+          style={{
+            position: 'absolute',
+            bottom: -30,
+            width: SCREEN_WIDTH,
+            height: 50,
+            backgroundColor: 'black',
+          }}
+        />
       </SafeAreaView>
     </>
   );
@@ -64,7 +82,7 @@ const styles = StyleSheet.create({
   btnContainer: {
     zIndex: 0,
     position: 'absolute',
-    bottom: 60,
+    bottom: 120,
     right: 40,
     flexDirection: 'row',
   },

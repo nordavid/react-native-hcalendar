@@ -74,6 +74,10 @@ const HCalendar = ({borderRadius, daysBeforeToday, daysAfterToday}) => {
     }
   };
 
+  const calendarItemLongPresses = (id, tappedIndex) => {
+    console.log('cal item long pressed');
+  };
+
   const openCalendar = (index) => {
     Animated.timing(widthAnim, {
       toValue: 5 * ITEM_WIDTH,
@@ -118,6 +122,7 @@ const HCalendar = ({borderRadius, daysBeforeToday, daysAfterToday}) => {
       <HCalendarItem
         item={item}
         onPress={() => calItemTapped(item.id, index)}
+        onLongPress={() => calendarItemLongPresses(item.id, index)}
         isActiveItem={index === selectedIndex}
         borderRadius={borderRadius}
         isDeactivated={index > dateList.length - 5}
