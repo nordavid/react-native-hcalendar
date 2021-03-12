@@ -41,8 +41,7 @@ const HCalendarReanimated = ({
   const initDateList = () => {
     const calendarElements = createCalendarElements(
       daysBeforeToday,
-      // add 4 elements, we need 4 disabled items at the end of the list
-      // because it cant be scrolled to them
+      // add 4 elements to daysAfterToday as we need 4 disabled items at the end of the list
       daysAfterToday + 4,
     );
     setDateList(calendarElements);
@@ -73,11 +72,26 @@ const HCalendarReanimated = ({
   };
 
   const calendarItemLongPresses = (id, tappedIndex) => {
-    console.log('cal item long pressed');
-    setSelectedIndex(tappedIndex);
     if (isCalendarOpened) {
-      closeCalendar(tappedIndex);
-      setIsCalendarOpened(false);
+      setSelectedIndex(tappedIndex);
+      ReactNativeHapticFeedback.trigger('impactHeavy', options);
+      console.log('cal item long pressed');
+
+      setTimeout(() => {
+        closeCalendar(tappedIndex);
+        setIsCalendarOpened(false);
+      }, 100);
+    }
+  };
+
+  const todayBtnTapped = () => {
+    ReactNativeHapticFeedback.trigger('impactHeavy', options);
+    setSelectedIndex(daysBeforeToday);
+    if (flatListRef.current) {
+      flatListRef.current.scrollToIndex({
+        animated: isCalendarOpened,
+        index: daysBeforeToday,
+      });
     }
   };
 
@@ -107,17 +121,6 @@ const HCalendarReanimated = ({
       flatListRef.current.scrollToIndex({
         animated: true,
         index: index,
-      });
-    }
-  };
-
-  const todayBtnTapped = () => {
-    ReactNativeHapticFeedback.trigger('impactHeavy', options);
-    setSelectedIndex(daysBeforeToday);
-    if (flatListRef.current) {
-      flatListRef.current.scrollToIndex({
-        animated: true,
-        index: daysBeforeToday,
       });
     }
   };
