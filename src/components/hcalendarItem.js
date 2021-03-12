@@ -16,7 +16,7 @@ const HCalendarItem = ({
     item.isToday && {fontWeight: 'bold', color: '#FAA82B'},
     item.dayAcronym == 'Fr' && {fontWeight: '700'},
     item.dayAcronym == 'Sa' && {fontWeight: '700'},
-    isDeactivated && {opacity: 0.3},
+    isDeactivated && {opacity: 0.2},
   ];
   return (
     <TouchableOpacity

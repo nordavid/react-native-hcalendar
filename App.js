@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -7,6 +7,7 @@ import {
   Dimensions,
   TouchableOpacity,
   View,
+  Pressable,
 } from 'react-native';
 import HCalendarReanimated from './src/components/hcalendarReanimated';
 import HCalendar from './src/components/hcalendar';
@@ -14,24 +15,36 @@ import HCalendar from './src/components/hcalendar';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const App = () => {
-  const animateFlatList = () => {};
+  const hcalendarRef = useRef(null);
+
+  const closeCalendar = () => {
+    hcalendarRef.current.closeCalendarRef();
+  };
 
   return (
     <>
       <StatusBar barStyle="light-content" />
       <SafeAreaView style={styles.safeAreaContainer}>
-        <Image
+        <Pressable
           style={{
             position: 'absolute',
             bottom: -500,
             width: SCREEN_WIDTH + 100,
             opacity: 0.5,
           }}
-          resizeMode={'contain'}
-          source={require('./src/assets/maptwo.png')}
-        />
+          onPress={closeCalendar}>
+          <Image
+            style={{
+              width: SCREEN_WIDTH + 100,
+              opacity: 0.5,
+            }}
+            resizeMode={'contain'}
+            source={require('./src/assets/maptwo.png')}
+          />
+        </Pressable>
         {/* <HCalendar borderRadius={150} daysBeforeToday={5} daysAfterToday={30} /> */}
         <HCalendarReanimated
+          ref={hcalendarRef}
           borderRadius={150}
           daysBeforeToday={5}
           daysAfterToday={30}
@@ -43,7 +56,7 @@ const App = () => {
               source={require('./src/assets/location-arrow-filled3x.png')}
             />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.mapBtns}>
+          <TouchableOpacity onPress={closeCalendar} style={styles.mapBtns}>
             <Image
               style={styles.filterIcon}
               source={require('./src/assets/filter-filled3x.png')}
@@ -80,10 +93,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   btnContainer: {
-    zIndex: 0,
+    zIndex: 1,
     position: 'absolute',
-    bottom: 120,
-    right: 40,
+    bottom: 121,
+    right: 45,
     flexDirection: 'row',
   },
   mapBtns: {
