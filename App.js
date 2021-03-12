@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useRef, useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -8,23 +8,35 @@ import {
   TouchableOpacity,
   View,
   Pressable,
+  Text,
 } from 'react-native';
+import {startOfToday} from 'date-fns';
 import HCalendarReanimated from './src/components/hcalendarReanimated';
 import HCalendar from './src/components/hcalendar';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const App = () => {
+  const [selectedDay, setSelectedDay] = useState(startOfToday().toISOString());
   const hcalendarRef = useRef(null);
 
   const closeCalendar = () => {
     hcalendarRef.current.closeCalendarRef();
   };
 
+  const handleSelectedItemChanged = (item) => {
+    setSelectedDay(item.timestamp);
+  };
+
   return (
     <>
       <StatusBar barStyle="light-content" />
       <SafeAreaView style={styles.safeAreaContainer}>
+        <View>
+          <Text style={{color: 'white', fontWeight: 'bold'}}>
+            {selectedDay}
+          </Text>
+        </View>
         <Pressable
           style={{
             position: 'absolute',
@@ -48,6 +60,7 @@ const App = () => {
           borderRadius={150}
           daysBeforeToday={5}
           daysAfterToday={30}
+          onSelectedItemChanged={(item) => handleSelectedItemChanged(item)}
         />
         <View style={styles.btnContainer}>
           <TouchableOpacity style={styles.mapBtns}>
