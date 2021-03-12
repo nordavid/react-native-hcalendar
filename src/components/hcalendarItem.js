@@ -6,6 +6,7 @@ const HCalendarItem = ({
   item,
   index,
   onPress,
+  onLongPress,
   isActiveItem,
   borderRadius,
   isDeactivated,
@@ -20,6 +21,7 @@ const HCalendarItem = ({
   return (
     <TouchableOpacity
       onPress={onPress}
+      onLongPress={onLongPress}
       disabled={item.placeholder || isDeactivated}
       style={[styles.calendarItem, {borderRadius: borderRadius}]}>
       {isActiveItem ? (

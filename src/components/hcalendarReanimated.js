@@ -54,7 +54,7 @@ const HCalendarReanimated = ({
     ReactNativeHapticFeedback.trigger('impactMedium', options);
 
     if (selectedIndex == tappedIndex && isCalendarOpened) {
-      console.log('same');
+      console.log('same as selected item');
       closeCalendar(tappedIndex);
       setIsCalendarOpened(false);
     } else if (selectedIndex == tappedIndex && !isCalendarOpened) {
@@ -69,6 +69,15 @@ const HCalendarReanimated = ({
           index: tappedIndex,
         });
       }
+    }
+  };
+
+  const calendarItemLongPresses = (id, tappedIndex) => {
+    console.log('cal item long pressed');
+    setSelectedIndex(tappedIndex);
+    if (isCalendarOpened) {
+      closeCalendar(tappedIndex);
+      setIsCalendarOpened(false);
     }
   };
 
@@ -119,6 +128,7 @@ const HCalendarReanimated = ({
       <HCalendarItem
         item={item}
         onPress={() => calendarItemTapped(item.id, index)}
+        onLongPress={() => calendarItemLongPresses(item.id, index)}
         isActiveItem={index === selectedIndex}
         borderRadius={borderRadius}
         isDeactivated={index > dateList.length - 5}
@@ -163,7 +173,7 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     alignItems: 'center',
-    bottom: 50,
+    bottom: 110,
     zIndex: 2,
   },
   overlay: {
