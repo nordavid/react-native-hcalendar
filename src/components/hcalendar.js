@@ -25,17 +25,22 @@ const HCalendar = ({borderRadius, daysBeforeToday, daysAfterToday}) => {
   const [selectedIndex, setSelectedIndex] = useState(daysBeforeToday);
   const [dateList, setDateList] = useState([]);
   const [isHCalendarOpen, setIsHCalendarOpen] = useState(false);
+  const isCalendarOpened = useRef(false);
   const flatListRef = useRef(null);
   const widthAnim = useRef(new Animated.Value(ITEM_WIDTH)).current;
 
   // useRefs
-  // const onViewRef = React.useRef((viewableItems) => {
-  //   //ReactNativeHapticFeedback.trigger('impactMedium', options);
-  // });
-  // const viewConfigRef = React.useRef({
-  //   viewAreaCoveragePercentThreshold: 0,
-  //   waitForInteraction: true,
-  // });
+  const onViewRef = React.useRef((viewableItems) => {
+    if (!isCalendarOpened.current) {
+      console.log(viewableItems);
+      console.log('scrolled closed calendar', isCalendarOpened);
+    }
+    //ReactNativeHapticFeedback.trigger('impactMedium', options);
+  });
+  const viewConfigRef = React.useRef({
+    viewAreaCoveragePercentThreshold: 0,
+    waitForInteraction: true,
+  });
 
   useEffect(() => {
     console.log('init datelist');
@@ -45,23 +50,25 @@ const HCalendar = ({borderRadius, daysBeforeToday, daysAfterToday}) => {
   const initDateList = () => {
     const calendarElements = createCalendarElements(
       daysBeforeToday,
-      daysAfterToday + 4, // add 4 elemtens because the last 4 items are disabled due to the fact that it cant be scrolled to them
+      // add 4 elements, we need 4 disabled items at the end of the list
+      // because it cant be scrolled to them
+      daysAfterToday + 4,
     );
     setDateList(calendarElements);
   };
 
   // calendaritem tapped
-  const calItemTapped = (id, tappedIndex) => {
-    console.log('tapped', tappedIndex, isHCalendarOpen);
+  const calendarItemTapped = (id, tappedIndex) => {
+    console.log('tapped', tappedIndex, isCalendarOpened);
     ReactNativeHapticFeedback.trigger('impactMedium', options);
 
-    if (selectedIndex == tappedIndex && isHCalendarOpen) {
+    if (selectedIndex == tappedIndex && isCalendarOpened.current) {
       console.log('same');
       closeCalendar(tappedIndex);
-      setIsHCalendarOpen(false);
-    } else if (selectedIndex == tappedIndex && !isHCalendarOpen) {
+      isCalendarOpened.current = false;
+    } else if (selectedIndex == tappedIndex && !isCalendarOpened.current) {
       openCalendar(tappedIndex);
-      setIsHCalendarOpen(true);
+      isCalendarOpened.current = true;
     } else {
       setSelectedIndex(tappedIndex);
       // scroll active cal item to beginning of flatlist on tap
@@ -77,7 +84,7 @@ const HCalendar = ({borderRadius, daysBeforeToday, daysAfterToday}) => {
   const openCalendar = (index) => {
     Animated.timing(widthAnim, {
       toValue: 5 * ITEM_WIDTH,
-      duration: 220,
+      duration: 240,
       easing: Easing.out(Easing.bezier(0.28, 0.1, 0.28, 0.99)),
       useNativeDriver: false,
     }).start();
@@ -117,10 +124,11 @@ const HCalendar = ({borderRadius, daysBeforeToday, daysAfterToday}) => {
     return (
       <HCalendarItem
         item={item}
-        onPress={() => calItemTapped(item.id, index)}
+        onPress={() => calendarItemTapped(item.id, index)}
         isActiveItem={index === selectedIndex}
         borderRadius={borderRadius}
         isDeactivated={index > dateList.length - 5}
+        index={index}
       />
     );
   };
@@ -143,11 +151,12 @@ const HCalendar = ({borderRadius, daysBeforeToday, daysAfterToday}) => {
           {borderRadius: borderRadius},
           {width: widthAnim},
         ]}
-        scrollEnabled={isHCalendarOpen}
+        //scrollEnabled={isCalendarOpened.current}
+        scrollEnabled={true}
         horizontal={true}
         snapToAlignment={'center'}
-        // onViewableItemsChanged={onViewRef.current}
-        // viewabilityConfig={viewConfigRef.current}
+        onViewableItemsChanged={onViewRef.current}
+        viewabilityConfig={viewConfigRef.current}
         getItemLayout={(data, index) => ({
           length: ITEM_WIDTH,
           offset: ITEM_WIDTH * index,
