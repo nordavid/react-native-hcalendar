@@ -27,7 +27,11 @@ const HCalendar = ({borderRadius, daysBeforeToday, daysAfterToday}) => {
   const [isHCalendarOpen, setIsHCalendarOpen] = useState(false);
   const isCalendarOpened = useRef(false);
   const flatListRef = useRef(null);
-  const widthAnim = useRef(new Animated.Value(1)).current;
+  const animValue = useRef(new Animated.Value(ITEM_WIDTH)).current;
+  const animValueWidth = animValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [300, 60],
+  });
 
   // useRefs
   const onViewRef = React.useRef((viewableItems) => {
@@ -82,20 +86,20 @@ const HCalendar = ({borderRadius, daysBeforeToday, daysAfterToday}) => {
   };
 
   const openCalendar = (index) => {
-    Animated.timing(widthAnim, {
-      toValue: 200,
+    Animated.timing(animValue, {
+      toValue: 1,
       duration: 240,
       easing: Easing.out(Easing.bezier(0.28, 0.1, 0.28, 0.99)),
-      useNativeDriver: true,
+      useNativeDriver: false,
     }).start();
   };
 
   const closeCalendar = (index) => {
-    Animated.timing(widthAnim, {
+    Animated.timing(animValue, {
       toValue: 0,
       duration: 240,
       easing: Easing.out(Easing.bezier(0.28, 0.1, 0.28, 0.99)),
-      useNativeDriver: true,
+      useNativeDriver: false,
     }).start(() => scrollToIndex(index));
   };
 
@@ -149,7 +153,7 @@ const HCalendar = ({borderRadius, daysBeforeToday, daysAfterToday}) => {
         style={[
           styles.flatList,
           {borderRadius: borderRadius},
-          {transform: [{translateX: widthAnim}]},
+          {width: animValueWidth},
         ]}
         //scrollEnabled={isCalendarOpened.current}
         scrollEnabled={true}
@@ -185,7 +189,7 @@ const styles = StyleSheet.create({
   flatListCC: {},
   flatList: {
     backgroundColor: '#363535',
-    //width: 300,
+    width: 60,
     height: ITEM_HEIGHT,
     borderRadius: 15,
   },
