@@ -74,6 +74,10 @@ const HCalendar = ({borderRadius, daysBeforeToday, daysAfterToday}) => {
     }
   };
 
+  const calendarItemLongPresses = (id, tappedIndex) => {
+    console.log('cal item long pressed');
+  };
+
   const openCalendar = (index) => {
     Animated.timing(widthAnim, {
       toValue: 5 * ITEM_WIDTH,
@@ -118,6 +122,7 @@ const HCalendar = ({borderRadius, daysBeforeToday, daysAfterToday}) => {
       <HCalendarItem
         item={item}
         onPress={() => calItemTapped(item.id, index)}
+        onLongPress={() => calendarItemLongPresses(item.id, index)}
         isActiveItem={index === selectedIndex}
         borderRadius={borderRadius}
         isDeactivated={index > dateList.length - 5}
@@ -132,6 +137,30 @@ const HCalendar = ({borderRadius, daysBeforeToday, daysAfterToday}) => {
           <Text style={styles.todayButtonTxt}>HEUTE</Text>
         </TouchableOpacity>
       )}
+
+      <Animated.ScrollView
+        style={[
+          styles.flatList,
+          {borderRadius: borderRadius},
+          {width: widthAnim},
+        ]}
+        horizontal={true}
+        snapToInterval={ITEM_WIDTH}
+        decelerationRate={'fast'}
+        showsHorizontalScrollIndicator={false}>
+        {dateList.map((item, index) => {
+          return (
+            <HCalendarItem
+              item={item}
+              onPress={() => calendarItemTapped(item.id, index)}
+              isActiveItem={index === selectedIndex}
+              borderRadius={borderRadius}
+              isDeactivated={index > dateList.length - 5}
+              index={index}
+            />
+          );
+        })}
+      </Animated.ScrollView>
 
       <Animated.FlatList
         ref={flatListRef}

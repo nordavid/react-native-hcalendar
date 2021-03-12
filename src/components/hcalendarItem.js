@@ -5,6 +5,7 @@ import LinearGradient from 'react-native-linear-gradient';
 const HCalendarItem = ({
   item,
   onPress,
+  onLongPress,
   isActiveItem,
   borderRadius,
   isDeactivated,
@@ -14,11 +15,12 @@ const HCalendarItem = ({
     item.isToday && {fontWeight: 'bold', color: '#FAA82B'},
     item.dayAcronym == 'Fr' && {fontWeight: '700'},
     item.dayAcronym == 'Sa' && {fontWeight: '700'},
-    isDeactivated && {opacity: 0.3},
+    isDeactivated && {opacity: 0.2},
   ];
   return (
     <TouchableOpacity
       onPress={onPress}
+      onLongPress={onLongPress}
       disabled={item.placeholder || isDeactivated}
       style={[styles.calendarItem, {borderRadius: borderRadius}]}>
       {isActiveItem ? (
@@ -49,6 +51,7 @@ const HCalendarItem = ({
         </LinearGradient>
       ) : (
         <>
+          {/* <Text style={textStyle}>i: {index}</Text> */}
           <Text style={textStyle}>{item.dayAcronym}</Text>
           <Text style={textStyle}>{item.dayNumber}</Text>
         </>
