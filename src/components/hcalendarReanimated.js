@@ -28,7 +28,10 @@ const ITEM_HEIGHT = 60;
 const SCROLL_TAPPED_ITEM = true;
 
 const HCalendarReanimated = forwardRef(
-  ({borderRadius, daysBeforeToday, daysAfterToday}, ref) => {
+  (
+    {borderRadius, daysBeforeToday, daysAfterToday, onSelectedItemChanged},
+    ref,
+  ) => {
     // useStates
     const [selectedIndex, setSelectedIndex] = useState(daysBeforeToday);
     const [dateList, setDateList] = useState([]);
@@ -59,7 +62,7 @@ const HCalendarReanimated = forwardRef(
     };
 
     // calendaritem tapped
-    const calendarItemTapped = (id, tappedIndex) => {
+    const calendarItemTapped = (item, tappedIndex) => {
       console.log('tapped', tappedIndex, isCalendarOpened);
       ReactNativeHapticFeedback.trigger('impactMedium', options);
 
@@ -70,6 +73,7 @@ const HCalendarReanimated = forwardRef(
         openCalendar();
       } else {
         setSelectedIndex(tappedIndex);
+        onSelectedItemChanged(item);
         // scroll active cal item to beginning of flatlist on tap
         if (flatListRef.current && SCROLL_TAPPED_ITEM) {
           flatListRef.current.scrollToIndex({
@@ -80,9 +84,10 @@ const HCalendarReanimated = forwardRef(
       }
     };
 
-    const calendarItemLongPresses = (id, tappedIndex) => {
+    const calendarItemLongPresses = (item, tappedIndex) => {
       if (isCalendarOpened) {
         setSelectedIndex(tappedIndex);
+        onSelectedItemChanged(item);
         ReactNativeHapticFeedback.trigger('impactHeavy', options);
         console.log('cal item long pressed');
 
@@ -93,7 +98,7 @@ const HCalendarReanimated = forwardRef(
       }
     };
 
-    const todayBtnTapped = () => {
+    const todayButtonTapped = () => {
       ReactNativeHapticFeedback.trigger('impactHeavy', options);
       setSelectedIndex(daysBeforeToday);
       if (flatListRef.current) {
@@ -141,8 +146,8 @@ const HCalendarReanimated = forwardRef(
       return (
         <HCalendarItem
           item={item}
-          onPress={() => calendarItemTapped(item.id, index)}
-          onLongPress={() => calendarItemLongPresses(item.id, index)}
+          onPress={() => calendarItemTapped(item, index)}
+          onLongPress={() => calendarItemLongPresses(item, index)}
           isActiveItem={index === selectedIndex}
           borderRadius={borderRadius}
           isDeactivated={index > dateList.length - 5}
@@ -154,7 +159,9 @@ const HCalendarReanimated = forwardRef(
     return (
       <View style={styles.container}>
         {selectedIndex != daysBeforeToday && (
-          <TouchableOpacity style={styles.todayButton} onPress={todayBtnTapped}>
+          <TouchableOpacity
+            style={styles.todayButton}
+            onPress={todayButtonTapped}>
             <Text style={styles.todayButtonTxt}>HEUTE</Text>
           </TouchableOpacity>
         )}
