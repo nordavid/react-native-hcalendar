@@ -4,6 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 
 const HCalendarItem = ({
   item,
+  index,
   onPress,
   isActiveItem,
   borderRadius,
@@ -49,6 +50,7 @@ const HCalendarItem = ({
         </LinearGradient>
       ) : (
         <>
+          {/* <Text style={textStyle}>i: {index}</Text> */}
           <Text style={textStyle}>{item.dayAcronym}</Text>
           <Text style={textStyle}>{item.dayNumber}</Text>
         </>
