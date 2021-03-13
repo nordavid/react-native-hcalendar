@@ -101,6 +101,7 @@ const HCalendarReanimated = forwardRef(
     const todayButtonTapped = () => {
       ReactNativeHapticFeedback.trigger('impactHeavy', options);
       setSelectedIndex(daysBeforeToday);
+      onSelectedItemChanged(dateList[daysBeforeToday]);
       if (flatListRef.current) {
         flatListRef.current.scrollToIndex({
           animated: isCalendarOpened,
