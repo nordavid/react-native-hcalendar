@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import {startOfToday} from 'date-fns';
 import HCalendarReanimated from './src/components/hcalendarReanimated';
+import SplashScreen from 'react-native-splash-screen';
 import HCalendar from './src/components/hcalendar';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -19,6 +20,12 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 const App = () => {
   const [selectedDay, setSelectedDay] = useState(startOfToday().toISOString());
   const hcalendarRef = useRef(null);
+
+  useEffect(() => {
+    setTimeout(() => {
+      SplashScreen.hide();
+    }, 1000);
+  }, []);
 
   const closeCalendar = () => {
     hcalendarRef.current.closeCalendarRef();
