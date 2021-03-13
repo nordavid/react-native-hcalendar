@@ -17,14 +17,13 @@ import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import {DAYS} from '../constants/data';
 import HCalendarItem from './hcalendarItem';
 import {createCalendarElements} from './hcalendar.utils';
+import {hcalendarStyles, ITEM_WIDTH} from './hcalendar.styles';
 
 const options = {
   enableVibrateFallback: true,
   ignoreAndroidSystemSettings: false,
 };
 
-const ITEM_WIDTH = 60;
-const ITEM_HEIGHT = 60;
 const SCROLL_TAPPED_ITEM = true;
 
 const HCalendarReanimated = forwardRef(
@@ -44,10 +43,8 @@ const HCalendarReanimated = forwardRef(
     }, []);
 
     useImperativeHandle(ref, () => ({
-      closeCalendarRef() {
-        console.log('called from parent');
-        closeCalendar(selectedIndex);
-        setIsCalendarOpened(false);
+      closeCalendar() {
+        closeCalendar();
       },
     }));
 
@@ -158,21 +155,22 @@ const HCalendarReanimated = forwardRef(
     };
 
     return (
-      <View style={styles.container}>
+      <View style={hcalendarStyles.container}>
         {selectedIndex != daysBeforeToday && (
           <TouchableOpacity
-            style={styles.todayButton}
+            style={hcalendarStyles.todayButton}
             onPress={todayButtonTapped}>
-            <Text style={styles.todayButtonTxt}>HEUTE</Text>
+            <Text style={hcalendarStyles.todayButtonTxt}>HEUTE</Text>
           </TouchableOpacity>
         )}
-        <Animated.View style={[styles.overlay, {borderRadius}, animatedStyle]}>
+        <Animated.View
+          style={[hcalendarStyles.overlay, {borderRadius}, animatedStyle]}>
           <FlatList
             ref={flatListRef}
-            contentContainerStyle={styles.flatListCC}
+            contentContainerStyle={hcalendarStyles.flatListCC}
             decelerationRate={'fast'}
             snapToInterval={ITEM_WIDTH}
-            style={[styles.flatList, {borderRadius: borderRadius}]}
+            style={[hcalendarStyles.flatList, {borderRadius: borderRadius}]}
             scrollEnabled={isCalendarOpened}
             horizontal={true}
             getItemLayout={(data, index) => ({
@@ -191,43 +189,5 @@ const HCalendarReanimated = forwardRef(
     );
   },
 );
-
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    alignItems: 'center',
-    bottom: 110,
-    zIndex: 2,
-  },
-  overlay: {
-    overflow: 'hidden',
-  },
-  flatList: {
-    backgroundColor: '#363535',
-    width: 300,
-    height: ITEM_HEIGHT,
-    borderRadius: 15,
-  },
-  activeCalItemBorder: {
-    width: ITEM_WIDTH,
-    height: ITEM_HEIGHT,
-    borderRadius: 15,
-    borderColor: 'white',
-    borderWidth: 2,
-    position: 'absolute',
-  },
-  todayButton: {
-    paddingHorizontal: 14,
-    paddingVertical: 5,
-    backgroundColor: '#363535',
-    marginBottom: 10,
-    borderRadius: 50,
-  },
-  todayButtonTxt: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 11,
-  },
-});
 
 export default HCalendarReanimated;

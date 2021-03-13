@@ -14,6 +14,7 @@ import {startOfToday} from 'date-fns';
 import HCalendarReanimated from './src/components/hcalendarReanimated';
 import SplashScreen from 'react-native-splash-screen';
 import HCalendar from './src/components/hcalendar';
+import HCalendar2 from './src/components/hcalendar2';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -28,7 +29,7 @@ const App = () => {
   }, []);
 
   const closeCalendar = () => {
-    hcalendarRef.current.closeCalendarRef();
+    hcalendarRef.current.closeCalendar();
   };
 
   const handleSelectedItemChanged = (item) => {
@@ -61,14 +62,20 @@ const App = () => {
             source={require('./src/assets/maptwo.png')}
           />
         </Pressable>
-        {/* <HCalendar borderRadius={150} daysBeforeToday={5} daysAfterToday={30} /> */}
-        <HCalendarReanimated
+        <HCalendar2
           ref={hcalendarRef}
           borderRadius={150}
           daysBeforeToday={5}
           daysAfterToday={30}
           onSelectedItemChanged={(item) => handleSelectedItemChanged(item)}
         />
+        {/* <HCalendarReanimated
+          ref={hcalendarRef}
+          borderRadius={150}
+          daysBeforeToday={5}
+          daysAfterToday={30}
+          onSelectedItemChanged={(item) => handleSelectedItemChanged(item)}
+        /> */}
         <View style={styles.btnContainer}>
           <TouchableOpacity style={styles.mapBtns}>
             <Image
