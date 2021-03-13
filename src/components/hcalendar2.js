@@ -1,10 +1,3 @@
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  Easing,
-  withSpring,
-  withTiming,
-} from 'react-native-reanimated';
 import React, {
   useState,
   useRef,
@@ -12,9 +5,15 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from 'react';
-import {StyleSheet, FlatList, View, TouchableOpacity, Text} from 'react-native';
+import {
+  FlatList,
+  View,
+  TouchableOpacity,
+  Text,
+  Easing,
+  Animated,
+} from 'react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-import {DAYS} from '../constants/data';
 import HCalendarItem from './hcalendarItem';
 import {createCalendarElements} from './hcalendar.utils';
 import {hcalendarStyles, ITEM_WIDTH} from './hcalendar.styles';
@@ -26,7 +25,7 @@ const options = {
 
 const SCROLL_TAPPED_ITEM = true;
 
-const HCalendarReanimated = forwardRef(
+const HCalendar2 = forwardRef(
   (
     {borderRadius, daysBeforeToday, daysAfterToday, onSelectedItemChanged},
     ref,
@@ -36,6 +35,7 @@ const HCalendarReanimated = forwardRef(
     const [dateList, setDateList] = useState([]);
     const [isCalendarOpened, setIsCalendarOpened] = useState(false);
     const flatListRef = useRef(null);
+    const animatedWidth = useRef(new Animated.Value(ITEM_WIDTH)).current;
 
     useEffect(() => {
       console.log('init datelist');
@@ -90,7 +90,6 @@ const HCalendarReanimated = forwardRef(
 
         setTimeout(() => {
           closeCalendar(tappedIndex);
-          setIsCalendarOpened(false);
         }, 100);
       }
     };
@@ -108,25 +107,23 @@ const HCalendarReanimated = forwardRef(
     };
 
     // animations
-    const flatListWith = useSharedValue(ITEM_WIDTH);
-    const animatedStyle = useAnimatedStyle(() => ({
-      width: flatListWith.value,
-    }));
-
     const openCalendar = () => {
-      flatListWith.value = withTiming(5 * ITEM_WIDTH, {
-        duration: 350,
-        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-      });
+      Animated.timing(animatedWidth, {
+        toValue: 5 * ITEM_WIDTH,
+        duration: 220,
+        easing: Easing.out(Easing.bezier(0.25, 0.1, 0.25, 1)),
+        useNativeDriver: false,
+      }).start();
       setIsCalendarOpened(true);
     };
 
     const closeCalendar = (index = selectedIndex) => {
-      flatListWith.value = withTiming(ITEM_WIDTH, {
-        duration: 350,
-        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-      });
-      scrollToIndex(index);
+      Animated.timing(animatedWidth, {
+        toValue: ITEM_WIDTH,
+        duration: 240,
+        easing: Easing.out(Easing.bezier(0.25, 0.1, 0.25, 1)),
+        useNativeDriver: false,
+      }).start(() => scrollToIndex(index));
       setIsCalendarOpened(false);
     };
 
@@ -164,7 +161,11 @@ const HCalendarReanimated = forwardRef(
           </TouchableOpacity>
         )}
         <Animated.View
-          style={[hcalendarStyles.overlay, {borderRadius}, animatedStyle]}>
+          style={[
+            hcalendarStyles.overlay,
+            {borderRadius},
+            {width: animatedWidth},
+          ]}>
           <FlatList
             ref={flatListRef}
             contentContainerStyle={hcalendarStyles.flatListCC}
@@ -190,4 +191,4 @@ const HCalendarReanimated = forwardRef(
   },
 );
 
-export default HCalendarReanimated;
+export default HCalendar2;

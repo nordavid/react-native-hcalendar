@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     alignItems: 'center',
-    bottom: 50,
+    bottom: 200,
   },
   flatListCC: {},
   flatList: {
