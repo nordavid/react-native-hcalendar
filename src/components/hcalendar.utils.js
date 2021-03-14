@@ -27,9 +27,8 @@ export const buildHorizontalCalendarElementFromDate = (date, index) => {
     id: index.toString(),
     dayNumber: format(date, 'd'),
     dayAcronym: format(date, 'cccccc', {locale: de}),
+    dayOfWeek: format(date, 'i'),
     timestamp: date.toISOString(),
     isToday: date.toISOString() === today,
-    // Today is set by default
-    isSelected: date.toISOString() === today,
   };
 };

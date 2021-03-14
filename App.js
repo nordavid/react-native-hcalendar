@@ -11,10 +11,9 @@ import {
   Text,
 } from 'react-native';
 import {startOfToday} from 'date-fns';
-import HCalendarReanimated from './src/components/hcalendarReanimated';
+//import HCalendarReanimated from './src/components/hcalendarReanimated';
 import SplashScreen from 'react-native-splash-screen';
-import HCalendar from './src/components/hcalendar';
-import HCalendar2 from './src/components/hcalendar2';
+import HCalendar from './src/components/hcalendar.component';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -23,9 +22,7 @@ const App = () => {
   const hcalendarRef = useRef(null);
 
   useEffect(() => {
-    setTimeout(() => {
-      SplashScreen.hide();
-    }, 1000);
+    SplashScreen.hide();
   }, []);
 
   const closeCalendar = () => {
@@ -62,7 +59,7 @@ const App = () => {
             source={require('./src/assets/maptwo.png')}
           />
         </Pressable>
-        <HCalendar2
+        <HCalendar
           ref={hcalendarRef}
           borderRadius={150}
           daysBeforeToday={5}
