@@ -14,7 +14,7 @@ import {
   Animated,
 } from 'react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-import HCalendarItem from './hcalendarItem';
+import HCalendarItem from './hcalendarItem.component';
 import {createCalendarElements} from './hcalendar.utils';
 import {hcalendarStyles, ITEM_WIDTH} from './hcalendar.styles';
 
@@ -23,7 +23,7 @@ const options = {
   ignoreAndroidSystemSettings: false,
 };
 
-const SCROLL_TAPPED_ITEM = true;
+const SCROLL_TO_TAPPED_ITEM = true;
 
 const HCalendar2 = forwardRef(
   (
@@ -72,12 +72,7 @@ const HCalendar2 = forwardRef(
         setSelectedIndex(tappedIndex);
         onSelectedItemChanged(item);
         // scroll active cal item to beginning of flatlist on tap
-        if (flatListRef.current && SCROLL_TAPPED_ITEM) {
-          flatListRef.current.scrollToIndex({
-            animated: true,
-            index: tappedIndex,
-          });
-        }
+        SCROLL_TO_TAPPED_ITEM && scrollToIndex(tappedIndex, true);
       }
     };
 
@@ -98,21 +93,15 @@ const HCalendar2 = forwardRef(
       ReactNativeHapticFeedback.trigger('impactHeavy', options);
       setSelectedIndex(daysBeforeToday);
       onSelectedItemChanged(dateList[daysBeforeToday]);
-      if (flatListRef.current) {
-        flatListRef.current.scrollToIndex({
-          animated: isCalendarOpened,
-          index: daysBeforeToday,
-        });
-      }
+      scrollToIndex(daysBeforeToday, isCalendarOpened);
     };
 
     // animations
     const openCalendar = () => {
-      Animated.timing(animatedWidth, {
-        toValue: 5 * ITEM_WIDTH,
-        duration: 220,
-        easing: Easing.out(Easing.bezier(0.25, 0.1, 0.25, 1)),
+      Animated.spring(animatedWidth, {
+        toValue: ITEM_WIDTH * 5,
         useNativeDriver: false,
+        friction: 8,
       }).start();
       setIsCalendarOpened(true);
     };
@@ -127,10 +116,10 @@ const HCalendar2 = forwardRef(
       setIsCalendarOpened(false);
     };
 
-    const scrollToIndex = (index = selectedIndex) => {
+    const scrollToIndex = (index = selectedIndex, animated = true) => {
       if (flatListRef.current) {
         flatListRef.current.scrollToIndex({
-          animated: true,
+          animated: animated,
           index: index,
         });
       }
@@ -143,7 +132,7 @@ const HCalendar2 = forwardRef(
           item={item}
           onPress={() => calendarItemTapped(item, index)}
           onLongPress={() => calendarItemLongPresses(item, index)}
-          isActiveItem={index === selectedIndex}
+          isSelectedItem={index === selectedIndex}
           borderRadius={borderRadius}
           isDeactivated={index > dateList.length - 5}
           index={index}
