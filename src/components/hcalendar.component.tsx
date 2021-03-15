@@ -15,8 +15,12 @@ import {
   Animated,
 } from 'react-native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-import HCalendarItem from './hcalendarItem.component';
-import {createCalendarElements} from './hcalendar.utils';
+import HCalendarElement from './hcalendarElement.component';
+import {
+  createCalendarElements,
+  DEFAULT_DAYS_BEFORE_TODAY,
+  DEFAULT_DAYS_AFTER_TODAY,
+} from './hcalendar.utils';
 import {hcalendarStyles, ITEM_WIDTH} from './hcalendar.styles';
 import {HCalendarProps, HCalendarListItem} from './hcalendar.types';
 
@@ -30,7 +34,7 @@ const SCROLL_TO_TAPPED_ITEM = true;
 const HCalendar: FC<HCalendarProps> = forwardRef((props, ref) => {
   // useStates
   const [selectedIndex, setSelectedIndex] = useState<number>(
-    props.daysBeforeToday || 15,
+    props.daysBeforeToday || DEFAULT_DAYS_BEFORE_TODAY,
   );
   const [dateList, setDateList] = useState<HCalendarListItem[]>([]);
   const [isCalendarOpened, setIsCalendarOpened] = useState<boolean>(false);
@@ -49,17 +53,16 @@ const HCalendar: FC<HCalendarProps> = forwardRef((props, ref) => {
     },
   }));
 
-  // functions
   const initDateList = () => {
     const calendarElements = createCalendarElements(
-      props.daysBeforeToday,
+      props.daysBeforeToday || DEFAULT_DAYS_BEFORE_TODAY,
       // add 4 elements to daysAfterToday as we need 4 disabled items at the end of the list
-      props.daysAfterToday || 3 + 4,
+      props.daysAfterToday || DEFAULT_DAYS_AFTER_TODAY + 4,
     );
     setDateList(calendarElements);
   };
 
-  // calendaritem tapped
+  // calendaritem interactions
   const calendarItemTapped = (item: HCalendarListItem, tappedIndex: number) => {
     console.log('tapped', tappedIndex, isCalendarOpened);
     ReactNativeHapticFeedback.trigger('impactMedium', options);
@@ -72,7 +75,6 @@ const HCalendar: FC<HCalendarProps> = forwardRef((props, ref) => {
     } else {
       setSelectedIndex(tappedIndex);
       props.onSelectedItemChanged(item);
-      // scroll active cal item to beginning of flatlist on tap
       SCROLL_TO_TAPPED_ITEM && scrollToIndex(tappedIndex, true);
     }
   };
@@ -95,8 +97,10 @@ const HCalendar: FC<HCalendarProps> = forwardRef((props, ref) => {
 
   const todayButtonTapped = () => {
     ReactNativeHapticFeedback.trigger('impactHeavy', options);
-    setSelectedIndex(props.daysBeforeToday || 3);
-    props.onSelectedItemChanged(dateList[props.daysBeforeToday || 3]);
+    setSelectedIndex(props.daysBeforeToday || DEFAULT_DAYS_BEFORE_TODAY);
+    props.onSelectedItemChanged(
+      dateList[props.daysBeforeToday || DEFAULT_DAYS_BEFORE_TODAY],
+    );
     scrollToIndex(props.daysBeforeToday, isCalendarOpened);
   };
 
@@ -139,7 +143,7 @@ const HCalendar: FC<HCalendarProps> = forwardRef((props, ref) => {
     item: HCalendarListItem;
   }) => {
     return (
-      <HCalendarItem
+      <HCalendarElement
         item={item}
         onPress={() => calendarItemTapped(item, index)}
         onLongPress={() => calendarItemLongPressed(item, index)}

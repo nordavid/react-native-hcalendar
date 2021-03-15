@@ -1,16 +1,16 @@
 import React, {FC} from 'react';
 import {Text, TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {hcalendarItemStyles} from './hcalendarItem.styles';
+import {hcalendarElementStyles} from './hcalendarElement.styles';
 import {HCalendarElementProps} from './hcalendar.types';
 
-const HCalendarItem: FC<HCalendarElementProps> = (props) => {
+const HCalendarElement: FC<HCalendarElementProps> = (props) => {
   const textStyle = [
-    hcalendarItemStyles.defaultTxt,
-    props.item.isToday && hcalendarItemStyles.todayTxt,
-    props.item.dayOfWeek == '5' && hcalendarItemStyles.weekendTxt,
-    props.item.dayOfWeek == '6' && hcalendarItemStyles.weekendTxt,
-    props.isDeactivated && hcalendarItemStyles.deactivatedItem,
+    hcalendarElementStyles.defaultTxt,
+    props.item.isToday && hcalendarElementStyles.todayTxt,
+    props.item.dayOfWeek == '5' && hcalendarElementStyles.weekendTxt,
+    props.item.dayOfWeek == '6' && hcalendarElementStyles.weekendTxt,
+    props.isDeactivated && hcalendarElementStyles.deactivatedItem,
   ];
   return (
     <TouchableOpacity
@@ -18,7 +18,7 @@ const HCalendarItem: FC<HCalendarElementProps> = (props) => {
       onLongPress={props.onLongPress}
       disabled={props.isDeactivated}
       style={[
-        hcalendarItemStyles.calendarItem,
+        hcalendarElementStyles.calendarItem,
         {borderRadius: props.borderRadius},
       ]}>
       {props.isSelectedItem ? (
@@ -27,13 +27,13 @@ const HCalendarItem: FC<HCalendarElementProps> = (props) => {
           start={{x: 0.0, y: 0.25}}
           end={{x: 0.5, y: 1.0}}
           style={[
-            hcalendarItemStyles.activeCalItem,
+            hcalendarElementStyles.activeCalItem,
             {borderRadius: props.borderRadius},
           ]}>
-          <Text style={hcalendarItemStyles.selectedItemDayTxt}>
+          <Text style={hcalendarElementStyles.selectedItemDayTxt}>
             {props.item.dayAcronym}
           </Text>
-          <Text style={hcalendarItemStyles.selectedItemNumberTxt}>
+          <Text style={hcalendarElementStyles.selectedItemNumberTxt}>
             {props.item.dayNumber}
           </Text>
         </LinearGradient>
@@ -47,4 +47,4 @@ const HCalendarItem: FC<HCalendarElementProps> = (props) => {
   );
 };
 
-export default HCalendarItem;
+export default HCalendarElement;
