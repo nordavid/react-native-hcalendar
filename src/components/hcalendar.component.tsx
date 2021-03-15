@@ -27,173 +27,165 @@ const options = {
 
 const SCROLL_TO_TAPPED_ITEM = true;
 
-const HCalendar: FC<HCalendarProps> = forwardRef(
-  (
-    {borderRadius, daysBeforeToday, daysAfterToday, onSelectedItemChanged},
-    ref,
+const HCalendar: FC<HCalendarProps> = forwardRef((props, ref) => {
+  // useStates
+  const [selectedIndex, setSelectedIndex] = useState<number>(
+    props.daysBeforeToday || 15,
+  );
+  const [dateList, setDateList] = useState<HCalendarListItem[]>([]);
+  const [isCalendarOpened, setIsCalendarOpened] = useState<boolean>(false);
+  const flatListRef = useRef<FlatList | null>(null);
+  const animatedWidth = useRef<Animated.Value>(new Animated.Value(ITEM_WIDTH))
+    .current;
+
+  useEffect(() => {
+    console.log('init datelist');
+    initDateList();
+  }, []);
+
+  useImperativeHandle(ref, () => ({
+    closeCalendar() {
+      closeCalendar();
+    },
+  }));
+
+  // functions
+  const initDateList = () => {
+    const calendarElements = createCalendarElements(
+      props.daysBeforeToday,
+      // add 4 elements to daysAfterToday as we need 4 disabled items at the end of the list
+      props.daysAfterToday || 3 + 4,
+    );
+    setDateList(calendarElements);
+  };
+
+  // calendaritem tapped
+  const calendarItemTapped = (item: HCalendarListItem, tappedIndex: number) => {
+    console.log('tapped', tappedIndex, isCalendarOpened);
+    ReactNativeHapticFeedback.trigger('impactMedium', options);
+
+    if (selectedIndex == tappedIndex && isCalendarOpened) {
+      console.log('same as selected item');
+      closeCalendar();
+    } else if (selectedIndex == tappedIndex && !isCalendarOpened) {
+      openCalendar();
+    } else {
+      setSelectedIndex(tappedIndex);
+      props.onSelectedItemChanged(item);
+      // scroll active cal item to beginning of flatlist on tap
+      SCROLL_TO_TAPPED_ITEM && scrollToIndex(tappedIndex, true);
+    }
+  };
+
+  const calendarItemLongPressed = (
+    item: HCalendarListItem,
+    tappedIndex: number,
   ) => {
-    // useStates
-    const [selectedIndex, setSelectedIndex] = useState<number>(
-      daysBeforeToday || 15,
-    );
-    const [dateList, setDateList] = useState<HCalendarListItem[]>([]);
-    const [isCalendarOpened, setIsCalendarOpened] = useState<boolean>(false);
-    const flatListRef = useRef<FlatList | null>(null);
-    const animatedWidth = useRef<Animated.Value>(new Animated.Value(ITEM_WIDTH))
-      .current;
-
-    useEffect(() => {
-      console.log('init datelist');
-      initDateList();
-    }, []);
-
-    useImperativeHandle(ref, () => ({
-      closeCalendar() {
-        closeCalendar();
-      },
-    }));
-
-    // functions
-    const initDateList = () => {
-      const calendarElements = createCalendarElements(
-        daysBeforeToday,
-        // add 4 elements to daysAfterToday as we need 4 disabled items at the end of the list
-        daysAfterToday || 3 + 4,
-      );
-      setDateList(calendarElements);
-    };
-
-    // calendaritem tapped
-    const calendarItemTapped = (
-      item: HCalendarListItem,
-      tappedIndex: number,
-    ) => {
-      console.log('tapped', tappedIndex, isCalendarOpened);
-      ReactNativeHapticFeedback.trigger('impactMedium', options);
-
-      if (selectedIndex == tappedIndex && isCalendarOpened) {
-        console.log('same as selected item');
-        closeCalendar();
-      } else if (selectedIndex == tappedIndex && !isCalendarOpened) {
-        openCalendar();
-      } else {
-        setSelectedIndex(tappedIndex);
-        onSelectedItemChanged(item);
-        // scroll active cal item to beginning of flatlist on tap
-        SCROLL_TO_TAPPED_ITEM && scrollToIndex(tappedIndex, true);
-      }
-    };
-
-    const calendarItemLongPresses = (
-      item: HCalendarListItem,
-      tappedIndex: number,
-    ) => {
-      if (isCalendarOpened) {
-        setSelectedIndex(tappedIndex);
-        onSelectedItemChanged(item);
-        ReactNativeHapticFeedback.trigger('impactHeavy', options);
-        console.log('cal item long pressed');
-
-        setTimeout(() => {
-          closeCalendar(tappedIndex);
-        }, 100);
-      }
-    };
-
-    const todayButtonTapped = () => {
+    if (isCalendarOpened) {
+      setSelectedIndex(tappedIndex);
+      props.onSelectedItemChanged(item);
       ReactNativeHapticFeedback.trigger('impactHeavy', options);
-      setSelectedIndex(daysBeforeToday || 3);
-      onSelectedItemChanged(dateList[daysBeforeToday || 3]);
-      scrollToIndex(daysBeforeToday, isCalendarOpened);
-    };
+      console.log('cal item long pressed');
 
-    const openCalendar = () => {
-      Animated.spring(animatedWidth, {
-        toValue: ITEM_WIDTH * 5,
-        useNativeDriver: false,
-        friction: 8,
-      }).start();
-      setIsCalendarOpened(true);
-    };
+      setTimeout(() => {
+        closeCalendar(tappedIndex);
+      }, 100);
+    }
+  };
 
-    const closeCalendar = (index = selectedIndex) => {
-      Animated.timing(animatedWidth, {
-        toValue: ITEM_WIDTH,
-        duration: 240,
-        easing: Easing.out(Easing.bezier(0.25, 0.1, 0.25, 1)),
-        useNativeDriver: false,
-      }).start(() => scrollToIndex(index));
-      setIsCalendarOpened(false);
-    };
+  const todayButtonTapped = () => {
+    ReactNativeHapticFeedback.trigger('impactHeavy', options);
+    setSelectedIndex(props.daysBeforeToday || 3);
+    props.onSelectedItemChanged(dateList[props.daysBeforeToday || 3]);
+    scrollToIndex(props.daysBeforeToday, isCalendarOpened);
+  };
 
-    const scrollToIndex = (
-      index: number = selectedIndex,
-      animated: boolean = true,
-    ) => {
-      if (flatListRef.current) {
-        flatListRef.current.scrollToIndex({
-          animated: animated,
-          index: index,
-        });
-      }
-    };
+  const openCalendar = () => {
+    Animated.spring(animatedWidth, {
+      toValue: ITEM_WIDTH * 5,
+      useNativeDriver: false,
+      friction: 8,
+    }).start();
+    setIsCalendarOpened(true);
+  };
 
-    const renderItem = ({
-      index,
-      item,
-    }: {
-      index: number;
-      item: HCalendarListItem;
-    }) => {
-      return (
-        <HCalendarItem
-          item={item}
-          onPress={() => calendarItemTapped(item, index)}
-          onLongPress={() => calendarItemLongPresses(item, index)}
-          isSelectedItem={index === selectedIndex}
-          borderRadius={borderRadius}
-          isDeactivated={index > dateList.length - 5}
-        />
-      );
-    };
+  const closeCalendar = (index = selectedIndex) => {
+    Animated.timing(animatedWidth, {
+      toValue: ITEM_WIDTH,
+      duration: 240,
+      easing: Easing.out(Easing.bezier(0.25, 0.1, 0.25, 1)),
+      useNativeDriver: false,
+    }).start(() => scrollToIndex(index));
+    setIsCalendarOpened(false);
+  };
 
+  const scrollToIndex = (
+    index: number = selectedIndex,
+    animated: boolean = true,
+  ) => {
+    if (flatListRef.current) {
+      flatListRef.current.scrollToIndex({
+        animated: animated,
+        index: index,
+      });
+    }
+  };
+
+  const renderItem = ({
+    index,
+    item,
+  }: {
+    index: number;
+    item: HCalendarListItem;
+  }) => {
     return (
-      <View style={hcalendarStyles.container}>
-        {selectedIndex != daysBeforeToday && (
-          <TouchableOpacity
-            style={hcalendarStyles.todayButton}
-            onPress={todayButtonTapped}>
-            <Text style={hcalendarStyles.todayButtonTxt}>HEUTE</Text>
-          </TouchableOpacity>
-        )}
-        <Animated.View
-          style={[
-            hcalendarStyles.overlay,
-            {borderRadius},
-            {width: animatedWidth},
-          ]}>
-          <FlatList
-            ref={flatListRef}
-            decelerationRate={'fast'}
-            snapToInterval={ITEM_WIDTH}
-            style={[hcalendarStyles.flatList, {borderRadius: borderRadius}]}
-            scrollEnabled={isCalendarOpened}
-            horizontal={true}
-            getItemLayout={(data, index) => ({
-              length: ITEM_WIDTH,
-              offset: ITEM_WIDTH * index,
-              index,
-            })}
-            initialScrollIndex={selectedIndex}
-            showsHorizontalScrollIndicator={false}
-            data={dateList}
-            keyExtractor={(calendarItem) => calendarItem.id}
-            renderItem={renderItem}
-          />
-        </Animated.View>
-      </View>
+      <HCalendarItem
+        item={item}
+        onPress={() => calendarItemTapped(item, index)}
+        onLongPress={() => calendarItemLongPressed(item, index)}
+        isSelectedItem={index === selectedIndex}
+        borderRadius={props.borderRadius}
+        isDeactivated={index > dateList.length - 5}
+      />
     );
-  },
-);
+  };
+
+  return (
+    <View style={hcalendarStyles.container}>
+      {selectedIndex != props.daysBeforeToday && (
+        <TouchableOpacity
+          style={hcalendarStyles.todayButton}
+          onPress={todayButtonTapped}>
+          <Text style={hcalendarStyles.todayButtonTxt}>HEUTE</Text>
+        </TouchableOpacity>
+      )}
+      <Animated.View
+        style={[
+          hcalendarStyles.overlay,
+          {borderRadius: props.borderRadius},
+          {width: animatedWidth},
+        ]}>
+        <FlatList
+          ref={flatListRef}
+          decelerationRate={'fast'}
+          snapToInterval={ITEM_WIDTH}
+          style={[hcalendarStyles.flatList, {borderRadius: props.borderRadius}]}
+          scrollEnabled={isCalendarOpened}
+          horizontal={true}
+          getItemLayout={(data, index) => ({
+            length: ITEM_WIDTH,
+            offset: ITEM_WIDTH * index,
+            index,
+          })}
+          initialScrollIndex={selectedIndex}
+          showsHorizontalScrollIndicator={false}
+          data={dateList}
+          keyExtractor={(calendarItem) => calendarItem.id}
+          renderItem={renderItem}
+        />
+      </Animated.View>
+    </View>
+  );
+});
 
 export default HCalendar;
