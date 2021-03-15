@@ -1,9 +1,10 @@
-import React from 'react';
+import React, {FC} from 'react';
 import {Text, TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {hcalendarItemStyles} from './hcalendarItem.styles';
+import {HCalendarElementProps} from './hcalendar.types';
 
-const HCalendarItem = ({
+const HCalendarItem: FC<HCalendarElementProps> = ({
   item,
   onPress,
   onLongPress,
@@ -14,8 +15,8 @@ const HCalendarItem = ({
   const textStyle = [
     hcalendarItemStyles.defaultTxt,
     item.isToday && hcalendarItemStyles.todayTxt,
-    item.dayOfWeek == 5 && hcalendarItemStyles.weekendTxt,
-    item.dayOfWeek == 6 && hcalendarItemStyles.weekendTxt,
+    item.dayOfWeek == '5' && hcalendarItemStyles.weekendTxt,
+    item.dayOfWeek == '6' && hcalendarItemStyles.weekendTxt,
     isDeactivated && hcalendarItemStyles.deactivatedItem,
   ];
   return (

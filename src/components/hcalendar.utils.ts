@@ -6,10 +6,11 @@ import {
   subDays,
 } from 'date-fns';
 import {de} from 'date-fns/locale';
+import {HCalendarListItem} from './hcalendar.types';
 
 export const createCalendarElements = (
-  daysBeforeToday = 3,
-  daysAfterToday = 14,
+  daysBeforeToday: number = 3,
+  daysAfterToday: number = 14,
 ) => {
   const currentDate = startOfToday();
   const startOfInterval = subDays(currentDate, daysBeforeToday);
@@ -21,7 +22,10 @@ export const createCalendarElements = (
   return calendarElements;
 };
 
-export const buildHorizontalCalendarElementFromDate = (date, index) => {
+export const buildHorizontalCalendarElementFromDate = (
+  date: Date,
+  index: number,
+) => {
   const today = startOfToday().toISOString();
   return {
     id: index.toString(),
@@ -30,5 +34,5 @@ export const buildHorizontalCalendarElementFromDate = (date, index) => {
     dayOfWeek: format(date, 'i'),
     timestamp: date.toISOString(),
     isToday: date.toISOString() === today,
-  };
+  } as HCalendarListItem;
 };
