@@ -32,7 +32,6 @@ const options = {
 const SCROLL_TO_TAPPED_ITEM = true;
 
 const HCalendar: FC<HCalendarProps> = forwardRef((props, ref) => {
-  // useStates
   const [selectedIndex, setSelectedIndex] = useState<number>(
     props.daysBeforeToday || DEFAULT_DAYS_BEFORE_TODAY,
   );
@@ -43,7 +42,6 @@ const HCalendar: FC<HCalendarProps> = forwardRef((props, ref) => {
     .current;
 
   useEffect(() => {
-    console.log('init datelist');
     initDateList();
   }, []);
 
@@ -62,13 +60,10 @@ const HCalendar: FC<HCalendarProps> = forwardRef((props, ref) => {
     setDateList(calendarElements);
   };
 
-  // calendaritem interactions
   const calendarItemTapped = (item: HCalendarListItem, tappedIndex: number) => {
-    console.log('tapped', tappedIndex, isCalendarOpened);
     ReactNativeHapticFeedback.trigger('impactMedium', options);
 
     if (selectedIndex == tappedIndex && isCalendarOpened) {
-      console.log('same as selected item');
       closeCalendar();
     } else if (selectedIndex == tappedIndex && !isCalendarOpened) {
       openCalendar();
@@ -87,7 +82,6 @@ const HCalendar: FC<HCalendarProps> = forwardRef((props, ref) => {
       setSelectedIndex(tappedIndex);
       props.onSelectedItemChanged(item);
       ReactNativeHapticFeedback.trigger('impactHeavy', options);
-      console.log('cal item long pressed');
 
       setTimeout(() => {
         closeCalendar(tappedIndex);
