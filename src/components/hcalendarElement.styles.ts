@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 
-export const hcalendarItemStyles = StyleSheet.create({
+export const hcalendarElementStyles = StyleSheet.create({
   calendarItem: {
     width: 60,
     marginLeft: 0,

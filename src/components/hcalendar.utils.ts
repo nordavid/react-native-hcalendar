@@ -8,9 +8,12 @@ import {
 import {de} from 'date-fns/locale';
 import {HCalendarListItem} from './hcalendar.types';
 
+export const DEFAULT_DAYS_BEFORE_TODAY = 3;
+export const DEFAULT_DAYS_AFTER_TODAY = 14;
+
 export const createCalendarElements = (
-  daysBeforeToday: number = 3,
-  daysAfterToday: number = 14,
+  daysBeforeToday: number = DEFAULT_DAYS_BEFORE_TODAY,
+  daysAfterToday: number = DEFAULT_DAYS_AFTER_TODAY,
 ) => {
   const currentDate = startOfToday();
   const startOfInterval = subDays(currentDate, daysBeforeToday);
