@@ -9,27 +9,55 @@ import {
   View,
   Pressable,
   Text,
+  Animated,
 } from 'react-native';
 import {startOfToday} from 'date-fns';
-//import HCalendarReanimated from './src/components/hcalendarReanimated';
 import SplashScreen from 'react-native-splash-screen';
 import HCalendar from './src/components/hcalendar.component';
+import {
+  HCalendarListItem,
+  HCalendarRef,
+} from './src/components/hcalendar.types';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const App = () => {
   const [selectedDay, setSelectedDay] = useState(startOfToday().toISOString());
-  const hcalendarRef = useRef(null);
+  const [isHCalendarOpened, setIsHCalendarOpened] = useState<boolean>(false);
+  const hcalendarRef = useRef<HCalendarRef | null>(null);
+
+  const fadeAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     SplashScreen.hide();
   }, []);
 
-  const closeCalendar = () => {
-    hcalendarRef.current.closeCalendar();
+  const onCalendarOpened = () => {
+    setIsHCalendarOpened(true);
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 150,
+      useNativeDriver: true,
+    }).start();
   };
 
-  const handleSelectedItemChanged = (item) => {
+  const onCalendarClosed = () => {
+    setIsHCalendarOpened(false);
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 220,
+      delay: 100,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const closeCalendar = () => {
+    if (hcalendarRef.current) {
+      hcalendarRef.current.closeCalendar();
+    }
+  };
+
+  const handleSelectedItemChanged = (item: HCalendarListItem) => {
     setSelectedDay(item.timestamp);
   };
 
@@ -39,7 +67,10 @@ const App = () => {
       <SafeAreaView style={styles.safeAreaContainer}>
         <View>
           <Text style={{color: 'white', fontWeight: 'bold'}}>
-            {selectedDay}
+            SelectedDay: {selectedDay}
+          </Text>
+          <Text style={{color: 'white', fontWeight: 'bold'}}>
+            isHCalendarOpened: {isHCalendarOpened.toString()}
           </Text>
         </View>
         <Pressable
@@ -64,29 +95,24 @@ const App = () => {
           borderRadius={150}
           daysBeforeToday={5}
           daysAfterToday={30}
+          onCalendarOpened={onCalendarOpened}
+          onCalendarClosed={onCalendarClosed}
           onSelectedItemChanged={(item) => handleSelectedItemChanged(item)}
         />
-        {/* <HCalendarReanimated
-          ref={hcalendarRef}
-          borderRadius={150}
-          daysBeforeToday={5}
-          daysAfterToday={30}
-          onSelectedItemChanged={(item) => handleSelectedItemChanged(item)}
-        /> */}
-        <View style={styles.btnContainer}>
+        <Animated.View style={{...styles.btnContainer, opacity: fadeAnim}}>
           <TouchableOpacity style={styles.mapBtns}>
             <Image
               style={styles.locationArrowIcon}
               source={require('./src/assets/location-arrow-filled3x.png')}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={closeCalendar} style={styles.mapBtns}>
+          <TouchableOpacity style={styles.mapBtns}>
             <Image
               style={styles.filterIcon}
               source={require('./src/assets/filter-filled3x.png')}
             />
           </TouchableOpacity>
-        </View>
+        </Animated.View>
         <Image
           style={{
             position: 'absolute',
@@ -120,7 +146,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
     position: 'absolute',
     bottom: 121,
-    right: 45,
+    right: 15,
     flexDirection: 'row',
   },
   mapBtns: {
