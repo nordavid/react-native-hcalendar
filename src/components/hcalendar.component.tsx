@@ -4,6 +4,7 @@ import React, {
   useEffect,
   forwardRef,
   useImperativeHandle,
+  FC,
 } from 'react';
 import {
   FlatList,
@@ -17,6 +18,7 @@ import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import HCalendarItem from './hcalendarItem.component';
 import {createCalendarElements} from './hcalendar.utils';
 import {hcalendarStyles, ITEM_WIDTH} from './hcalendar.styles';
+import {HCalendarProps, HCalendarListItem} from './hcalendar.types';
 
 const options = {
   enableVibrateFallback: true,
@@ -25,17 +27,20 @@ const options = {
 
 const SCROLL_TO_TAPPED_ITEM = true;
 
-const HCalendar2 = forwardRef(
+const HCalendar: FC<HCalendarProps> = forwardRef(
   (
     {borderRadius, daysBeforeToday, daysAfterToday, onSelectedItemChanged},
     ref,
   ) => {
     // useStates
-    const [selectedIndex, setSelectedIndex] = useState(daysBeforeToday);
-    const [dateList, setDateList] = useState([]);
-    const [isCalendarOpened, setIsCalendarOpened] = useState(false);
-    const flatListRef = useRef(null);
-    const animatedWidth = useRef(new Animated.Value(ITEM_WIDTH)).current;
+    const [selectedIndex, setSelectedIndex] = useState<number>(
+      daysBeforeToday || 15,
+    );
+    const [dateList, setDateList] = useState<HCalendarListItem[]>([]);
+    const [isCalendarOpened, setIsCalendarOpened] = useState<boolean>(false);
+    const flatListRef = useRef<FlatList | null>(null);
+    const animatedWidth = useRef<Animated.Value>(new Animated.Value(ITEM_WIDTH))
+      .current;
 
     useEffect(() => {
       console.log('init datelist');
@@ -53,13 +58,16 @@ const HCalendar2 = forwardRef(
       const calendarElements = createCalendarElements(
         daysBeforeToday,
         // add 4 elements to daysAfterToday as we need 4 disabled items at the end of the list
-        daysAfterToday + 4,
+        daysAfterToday || 3 + 4,
       );
       setDateList(calendarElements);
     };
 
     // calendaritem tapped
-    const calendarItemTapped = (item, tappedIndex) => {
+    const calendarItemTapped = (
+      item: HCalendarListItem,
+      tappedIndex: number,
+    ) => {
       console.log('tapped', tappedIndex, isCalendarOpened);
       ReactNativeHapticFeedback.trigger('impactMedium', options);
 
@@ -76,7 +84,10 @@ const HCalendar2 = forwardRef(
       }
     };
 
-    const calendarItemLongPresses = (item, tappedIndex) => {
+    const calendarItemLongPresses = (
+      item: HCalendarListItem,
+      tappedIndex: number,
+    ) => {
       if (isCalendarOpened) {
         setSelectedIndex(tappedIndex);
         onSelectedItemChanged(item);
@@ -91,12 +102,11 @@ const HCalendar2 = forwardRef(
 
     const todayButtonTapped = () => {
       ReactNativeHapticFeedback.trigger('impactHeavy', options);
-      setSelectedIndex(daysBeforeToday);
-      onSelectedItemChanged(dateList[daysBeforeToday]);
+      setSelectedIndex(daysBeforeToday || 3);
+      onSelectedItemChanged(dateList[daysBeforeToday || 3]);
       scrollToIndex(daysBeforeToday, isCalendarOpened);
     };
 
-    // animations
     const openCalendar = () => {
       Animated.spring(animatedWidth, {
         toValue: ITEM_WIDTH * 5,
@@ -116,7 +126,10 @@ const HCalendar2 = forwardRef(
       setIsCalendarOpened(false);
     };
 
-    const scrollToIndex = (index = selectedIndex, animated = true) => {
+    const scrollToIndex = (
+      index: number = selectedIndex,
+      animated: boolean = true,
+    ) => {
       if (flatListRef.current) {
         flatListRef.current.scrollToIndex({
           animated: animated,
@@ -125,8 +138,13 @@ const HCalendar2 = forwardRef(
       }
     };
 
-    const renderItem = ({index, item}) => {
-      //console.log(index);
+    const renderItem = ({
+      index,
+      item,
+    }: {
+      index: number;
+      item: HCalendarListItem;
+    }) => {
       return (
         <HCalendarItem
           item={item}
@@ -135,7 +153,6 @@ const HCalendar2 = forwardRef(
           isSelectedItem={index === selectedIndex}
           borderRadius={borderRadius}
           isDeactivated={index > dateList.length - 5}
-          index={index}
         />
       );
     };
@@ -157,7 +174,6 @@ const HCalendar2 = forwardRef(
           ]}>
           <FlatList
             ref={flatListRef}
-            contentContainerStyle={hcalendarStyles.flatListCC}
             decelerationRate={'fast'}
             snapToInterval={ITEM_WIDTH}
             style={[hcalendarStyles.flatList, {borderRadius: borderRadius}]}
@@ -180,4 +196,4 @@ const HCalendar2 = forwardRef(
   },
 );
 
-export default HCalendar2;
+export default HCalendar;
