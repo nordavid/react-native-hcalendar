@@ -3,6 +3,7 @@ export interface HCalendarRef {
 }
 
 export interface HCalendarProps {
+  ref?: any;
   onSelectedItemChanged: (item: HCalendarListItem) => void;
   onCalendarOpened?: () => void;
   onCalendarClosed?: () => void;
