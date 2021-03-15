@@ -25,7 +25,7 @@ export const createCalendarElements = (
 export const buildHorizontalCalendarElementFromDate = (
   date: Date,
   index: number,
-) => {
+): HCalendarListItem => {
   const today = startOfToday().toISOString();
   return {
     id: index.toString(),
@@ -34,5 +34,5 @@ export const buildHorizontalCalendarElementFromDate = (
     dayOfWeek: format(date, 'i'),
     timestamp: date.toISOString(),
     isToday: date.toISOString() === today,
-  } as HCalendarListItem;
+  };
 };
