@@ -1,5 +1,11 @@
+export interface HCalendarRef {
+  closeCalendar: () => void;
+}
+
 export interface HCalendarProps {
   onSelectedItemChanged: (item: HCalendarListItem) => void;
+  onCalendarOpened?: () => void;
+  onCalendarClosed?: () => void;
   borderRadius?: number;
   daysBeforeToday?: number;
   daysAfterToday?: number;

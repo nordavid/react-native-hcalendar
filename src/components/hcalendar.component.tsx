@@ -46,9 +46,7 @@ const HCalendar: FC<HCalendarProps> = forwardRef((props, ref) => {
   }, []);
 
   useImperativeHandle(ref, () => ({
-    closeCalendar() {
-      closeCalendar();
-    },
+    closeCalendar,
   }));
 
   const initDateList = () => {
@@ -105,6 +103,9 @@ const HCalendar: FC<HCalendarProps> = forwardRef((props, ref) => {
       friction: 8,
     }).start();
     setIsCalendarOpened(true);
+    if (props.onCalendarOpened) {
+      props.onCalendarOpened();
+    }
   };
 
   const closeCalendar = (index = selectedIndex) => {
@@ -115,6 +116,9 @@ const HCalendar: FC<HCalendarProps> = forwardRef((props, ref) => {
       useNativeDriver: false,
     }).start(() => scrollToIndex(index));
     setIsCalendarOpened(false);
+    if (props.onCalendarClosed) {
+      props.onCalendarClosed();
+    }
   };
 
   const scrollToIndex = (
