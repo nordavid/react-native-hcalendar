@@ -32,22 +32,27 @@ const options = {
 const SCROLL_TO_TAPPED_ITEM = true;
 
 const HCalendar: FC<HCalendarProps> = forwardRef((props, ref) => {
+  // states
   const [selectedIndex, setSelectedIndex] = useState<number>(
     props.daysBeforeToday || DEFAULT_DAYS_BEFORE_TODAY,
   );
   const [dateList, setDateList] = useState<HCalendarListItem[]>([]);
   const [isCalendarOpened, setIsCalendarOpened] = useState<boolean>(false);
+
+  // refs
   const flatListRef = useRef<FlatList | null>(null);
   const animatedWidth = useRef<Animated.Value>(new Animated.Value(ITEM_WIDTH))
     .current;
 
-  useEffect(() => {
-    initDateList();
-  }, []);
-
+  // make possible to close calendar from parent (when tapping on map)
+  // without using states in parent or passing lastTimeUserClickedMap
   useImperativeHandle(ref, () => ({
     closeCalendar,
   }));
+
+  useEffect(() => {
+    initDateList();
+  }, []);
 
   const initDateList = () => {
     const calendarElements = createCalendarElements(
@@ -88,7 +93,7 @@ const HCalendar: FC<HCalendarProps> = forwardRef((props, ref) => {
   };
 
   const todayButtonTapped = () => {
-    ReactNativeHapticFeedback.trigger('impactHeavy', options);
+    ReactNativeHapticFeedback.trigger('impactMedium', options);
     setSelectedIndex(props.daysBeforeToday || DEFAULT_DAYS_BEFORE_TODAY);
     props.onSelectedItemChanged(
       dateList[props.daysBeforeToday || DEFAULT_DAYS_BEFORE_TODAY],
