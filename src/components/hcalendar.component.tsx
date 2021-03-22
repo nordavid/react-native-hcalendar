@@ -40,6 +40,9 @@ const HCalendar: FC<HCalendarProps> = forwardRef((props, ref) => {
   const [isCalendarOpened, setIsCalendarOpened] = useState<boolean>(false);
 
   // refs
+  const daysBeforeToday = useRef<number>(
+    props.daysBeforeToday || DEFAULT_DAYS_BEFORE_TODAY,
+  );
   const flatListRef = useRef<FlatList | null>(null);
   const animatedWidth = useRef<Animated.Value>(new Animated.Value(ITEM_WIDTH))
     .current;
@@ -56,7 +59,7 @@ const HCalendar: FC<HCalendarProps> = forwardRef((props, ref) => {
 
   const initDateList = () => {
     const calendarElements = createCalendarElements(
-      props.daysBeforeToday || DEFAULT_DAYS_BEFORE_TODAY,
+      daysBeforeToday.current,
       // add 4 elements to daysAfterToday as we need 4 disabled items at the end of the list
       props.daysAfterToday || DEFAULT_DAYS_AFTER_TODAY + 4,
     );
@@ -94,11 +97,9 @@ const HCalendar: FC<HCalendarProps> = forwardRef((props, ref) => {
 
   const todayButtonTapped = () => {
     ReactNativeHapticFeedback.trigger('impactMedium', options);
-    setSelectedIndex(props.daysBeforeToday || DEFAULT_DAYS_BEFORE_TODAY);
-    props.onSelectedItemChanged(
-      dateList[props.daysBeforeToday || DEFAULT_DAYS_BEFORE_TODAY],
-    );
-    scrollToIndex(props.daysBeforeToday, isCalendarOpened);
+    setSelectedIndex(daysBeforeToday.current);
+    props.onSelectedItemChanged(dateList[daysBeforeToday.current]);
+    scrollToIndex(daysBeforeToday.current, isCalendarOpened);
   };
 
   const openCalendar = () => {
@@ -159,7 +160,7 @@ const HCalendar: FC<HCalendarProps> = forwardRef((props, ref) => {
 
   return (
     <View style={hcalendarStyles.container}>
-      {selectedIndex != props.daysBeforeToday && (
+      {selectedIndex != daysBeforeToday.current && (
         <TouchableOpacity
           style={hcalendarStyles.todayButton}
           onPress={todayButtonTapped}>
