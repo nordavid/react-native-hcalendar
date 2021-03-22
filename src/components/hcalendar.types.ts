@@ -3,7 +3,7 @@ export interface HCalendarRef {
 }
 
 export interface HCalendarProps {
-  ref?: any;
+  ref?: any; // added to remove error, not sure what the correct type is
   onSelectedItemChanged: (item: HCalendarListItem) => void;
   onCalendarOpened?: () => void;
   onCalendarClosed?: () => void;

@@ -5,7 +5,7 @@ import {hcalendarElementStyles} from './hcalendarElement.styles';
 import {HCalendarElementProps} from './hcalendar.types';
 
 const HCalendarElement: FC<HCalendarElementProps> = (props) => {
-  const textStyle = [
+  const dynamicTextStyle = [
     hcalendarElementStyles.defaultTxt,
     props.item.isToday && hcalendarElementStyles.todayTxt,
     props.item.dayOfWeek == '5' && hcalendarElementStyles.weekendTxt,
@@ -39,8 +39,8 @@ const HCalendarElement: FC<HCalendarElementProps> = (props) => {
         </LinearGradient>
       ) : (
         <>
-          <Text style={textStyle}>{props.item.dayAcronym}</Text>
-          <Text style={textStyle}>{props.item.dayNumber}</Text>
+          <Text style={dynamicTextStyle}>{props.item.dayAcronym}</Text>
+          <Text style={dynamicTextStyle}>{props.item.dayNumber}</Text>
         </>
       )}
     </TouchableOpacity>
