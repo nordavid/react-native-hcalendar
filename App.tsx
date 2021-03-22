@@ -93,8 +93,8 @@ const App = () => {
         <HCalendar
           ref={hcalendarRef}
           borderRadius={150}
-          daysBeforeToday={5}
-          daysAfterToday={30}
+          daysBeforeToday={4}
+          daysAfterToday={14}
           onCalendarOpened={onCalendarOpened}
           onCalendarClosed={onCalendarClosed}
           onSelectedItemChanged={(item) => handleSelectedItemChanged(item)}
